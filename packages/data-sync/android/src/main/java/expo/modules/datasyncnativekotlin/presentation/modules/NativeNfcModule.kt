@@ -1,6 +1,7 @@
 package expo.modules.datasyncnativekotlin.presentation.modules
 
 import expo.modules.datasyncnativekotlin.di.KoinInitializer
+import expo.modules.datasyncnativekotlin.domain.exception.ActivityNotFoundException
 import expo.modules.datasyncnativekotlin.domain.manager.AndroidNfcManager
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -20,13 +21,9 @@ class NativeNfcModule : Module(), KoinComponent {
             KoinInitializer.start(appContext.reactContext!!)
         }
 
-        Function("startNfcReader") {
-            // Lấy Activity hiện tại của Tablet
-            val activity = appContext.currentActivity ?: throw Exception("Không tìm thấy Activity")
-
-
-            nfcManager.startListening(activity) { tagData ->
-                // Khi có thẻ quẹt, bắn event thẳng lên React Native
+        AsyncFunction("startNfcReader") {
+            val activity = appContext.currentActivity ?: throw ActivityNotFoundException()
+            val result = nfcManager.startListening(activity) { tagData ->
                 sendEvent(
                     "onNfcTagScanned", mapOf(
                         "tagId" to tagData,
@@ -34,10 +31,12 @@ class NativeNfcModule : Module(), KoinComponent {
                     )
                 )
             }
+
+            return@AsyncFunction result
         }
 
         Function("stopNfcReader") {
-            val activity = appContext.currentActivity ?: throw Exception("Không tìm thấy Activity")
+            val activity = appContext.currentActivity ?: throw ActivityNotFoundException()
 
             nfcManager.stopListening(activity)
         }

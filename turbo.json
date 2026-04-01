@@ -5,7 +5,7 @@
     "type-check": {
       "dependsOn": ["^type-check"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"]
-    }, 
+    },
     "lint": {
       "dependsOn": ["^build"],
       "inputs": ["src/**/*.ts", "src/**/*.tsx", ".eslintrc.js", "package.json"],
@@ -13,12 +13,7 @@
     },
     "lint:ci": {
       "dependsOn": ["^build"],
-      "inputs": [
-        "src/**/*.ts", 
-        "src/**/*.tsx", 
-        "eslint.config.mjs", 
-        "eslint.config.strict.mjs"
-      ],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "eslint.config.mjs", "eslint.config.strict.mjs"],
       "outputs": []
     },
     "build": {
@@ -26,7 +21,6 @@
       "outputs": ["dist/**", ".expo/**", "android/app/build/**"]
     },
     "android:prebuild": {
-      "dependsOn": ["^build"],
       "outputs": ["android/**"],
       "cache": true
     },

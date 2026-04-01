@@ -6,9 +6,9 @@ export const checkIsConnected = (): boolean => {
     return NetworkModule.isConnected();
 };
 
-export const fetchNetworkInfo = async (): Promise<NetworkInfo> => {
+export const fetchNetworkInfo = (): NetworkInfo => {
     try {
-        return await NetworkModule.getNetworkInfo();
+        return NetworkModule.getNetworkInfo();
     } catch (error) {
         console.error("[NetworkModule] Lỗi lấy thông tin mạng:", error);
         return { isConnected: false, isValidated: false, type: 'UNKNOWN' };

@@ -20,3 +20,9 @@ export {
   checkFeatureEnabled,
   getAllFlags
 } from './FeatureFlagModule'
+
+
+export {
+  startReader,
+  stopReader
+} from './NfcModule'

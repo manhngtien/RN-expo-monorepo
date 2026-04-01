@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import expo.modules.datasyncnativekotlin.domain.exception.NfcNotSupportedException
 import expo.modules.datasyncnativekotlin.domain.manager.AndroidNfcManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,22 +20,26 @@ class AndroidNfcManagerImpl(context: Context) : AndroidNfcManager, NfcAdapter.Re
     override fun startListening(
         activity: Activity,
         onTagRead: (String) -> Unit
-    ) {
+    ): Boolean {
         if (nfcAdapter == null || !nfcAdapter.isEnabled) {
-            println("NFC không được hỗ trợ hoặc đang bị tắt!")
-            return
+            throw NfcNotSupportedException()
         }
 
         this.onTagReadCallback = onTagRead
 
-        // Cấu hình cờ để đọc đa dạng các loại thẻ (Thẻ từ, thẻ chip, thẻ xe...)
+        // Configure flags to read various card types (Magnetic cards, chip cards, vehicle cards, etc.)
         val flags = NfcAdapter.FLAG_READER_NFC_A or
                 NfcAdapter.FLAG_READER_NFC_B or
                 NfcAdapter.FLAG_READER_NFC_F or
                 NfcAdapter.FLAG_READER_NFC_V
 
-        // Bật Reader Mode: Bắt toàn bộ thẻ quẹt qua mà không hiện Popup của Android
-        nfcAdapter.enableReaderMode(activity, this, flags, null)
+        // Enable Reader Mode: Capture all swipes without displaying Android pop-ups.
+        try {
+            nfcAdapter.enableReaderMode(activity, this, flags, null)
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     override fun stopListening(activity: Activity) {
@@ -43,7 +48,9 @@ class AndroidNfcManagerImpl(context: Context) : AndroidNfcManager, NfcAdapter.Re
     }
 
     override fun onTagDiscovered(tag: Tag?) {
-        tag?.let {
+        if (tag == null) return
+
+        tag.let {
             // Ví dụ: Lấy mã ID vật lý của thẻ (UID)
             val tagIdBytes = it.id
             val tagIdHex = tagIdBytes.joinToString("") { byte -> "%02X".format(byte) }

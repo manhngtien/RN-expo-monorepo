@@ -2,7 +2,7 @@ import { NativeModule, requireNativeModule } from 'expo-modules-core';
 import { NetworkInfo, NetworkModuleEvents } from './Network.types';
 
 declare class NetworkModule extends NativeModule<NetworkModuleEvents> {
-    getNetworkInfo(): Promise<NetworkInfo>
+    getNetworkInfo(): NetworkInfo
     isConnected(): boolean
 }
 
