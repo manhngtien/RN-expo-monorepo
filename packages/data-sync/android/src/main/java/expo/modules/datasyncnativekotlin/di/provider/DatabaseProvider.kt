@@ -16,3 +16,5 @@ fun provideRoomDatabase(context: Context): AppDatabase {
 }
 
 fun providePokemonDao(database: AppDatabase) = database.pokemonDao()
+
+fun provideOutboxDao(database: AppDatabase) = database.outboxDao()

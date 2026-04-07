@@ -1,8 +1,8 @@
 package expo.modules.datasyncnativekotlin.core.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import expo.modules.datasyncnativekotlin.data.mapper.AppJson
 import expo.modules.datasyncnativekotlin.data.remote.api.PokeApiService
-import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,11 +10,6 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClient {
     internal const val BASE_URL = "https://pokeapi.co/api/v2/"
-
-    internal val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
 
     fun provideRetrofit(): Retrofit {
         // 2. Cấu hình OkHttp Engine
@@ -27,7 +22,7 @@ object NetworkClient {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(AppJson.instance.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 

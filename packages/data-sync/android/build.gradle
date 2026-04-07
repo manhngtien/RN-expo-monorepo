@@ -22,6 +22,8 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.identity:identity-jvm:202411.1'
+
     /**
      * Koin cho Android
      */
@@ -76,4 +78,24 @@ dependencies {
      */
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
+    /**
+     * UnitTest dependency
+     */
+    // Thư viện cơ bản cho Test
+    testImplementation 'junit:junit:4.13.2'
+
+    // MockK để làm giả các DAO và Database
+    testImplementation 'io.mockk:mockk:1.14.9'
+
+    // Test Coroutines (suspend function)
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
+
+    // Thư viện test cho Room
+    testImplementation 'androidx.room:room-testing:room_version'
+
+    // Robolectric (Để chạy test Android component trên máy tính mà không cần máy ảo/thiết bị thật)
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation 'androidx.test:core-ktx:1.7.0'
+    testImplementation 'androidx.test.ext:junit-ktx:1.3.0'
 }

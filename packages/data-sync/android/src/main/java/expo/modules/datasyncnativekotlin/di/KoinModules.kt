@@ -6,7 +6,10 @@ import expo.modules.datasyncnativekotlin.data.manager.AndroidNfcManagerImpl
 import expo.modules.datasyncnativekotlin.data.manager.FeatureFlagManagerImpl
 import expo.modules.datasyncnativekotlin.data.remote.api.PokeApiService
 import expo.modules.datasyncnativekotlin.data.repository.PokemonRepositoryImpl
+import expo.modules.datasyncnativekotlin.data.transaction.RoomTransactionRunner
+import expo.modules.datasyncnativekotlin.data.transaction.TransactionRunner
 import expo.modules.datasyncnativekotlin.di.provider.provideOkHttpClient
+import expo.modules.datasyncnativekotlin.di.provider.provideOutboxDao
 import expo.modules.datasyncnativekotlin.di.provider.providePokemonDao
 import expo.modules.datasyncnativekotlin.di.provider.provideRetrofit
 import expo.modules.datasyncnativekotlin.di.provider.provideRoomDatabase
@@ -26,24 +29,23 @@ val coreModule = module {
     // 2. Database Module
     single { provideRoomDatabase(androidContext()) }
     single { providePokemonDao(get()) }
+    single { provideOutboxDao(get()) }
+    single<TransactionRunner> { RoomTransactionRunner(get()) }
+
     // 3. Network Module
     single<NetworkMonitor> { AndroidNetworkMonitor(androidContext()) }
     single { provideOkHttpClient() }
     single { provideRetrofit(get()) }
 
-    //4. NFC Module
+    // 4. NFC Module
     single<AndroidNfcManager> { AndroidNfcManagerImpl(androidContext()) }
-
 }
 
 val dataModule = module {
-    // 5. Thêm Data & Presentation Layer
-    // Koin sẽ tự động lấy ApiService và PokemonDao ở trên để bơm vào đây
-    // 🔥 BỔ SUNG DÒNG NÀY: Dạy Koin cách tạo ApiService từ Retrofit
     single<PokeApiService> {
         get<Retrofit>().create(PokeApiService::class.java)
     }
-    single<PokemonRepository> { PokemonRepositoryImpl(get(), get()) }
+    single<PokemonRepository> { PokemonRepositoryImpl(get(), get(), get(), get()) }
     factory { GetPokemonListUseCase(get()) }
     single { PokemonFacade(get()) }
 }
